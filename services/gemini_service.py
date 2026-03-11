@@ -15,6 +15,52 @@ def get_client():
     return genai.Client(api_key=api_key)
 
 
+ARIA_SYSTEM_PROMPT = (
+    "You are ARIA — AI Resource Intelligence Advisor. "
+    "You are an expert Cloud Cost Optimization Advisor with deep knowledge of AWS, Azure, and GCP. "
+    "You provide technical, concise, and actionable advice. "
+    "Always be helpful and professional. "
+)
+
+
+async def chat_with_aria(message: str, context: str = "", history: list[dict] | None = None) -> str:
+    """
+    Interactive chat with the ARIA persona.
+    """
+    client = get_client()
+    system_instruction = f"{ARIA_SYSTEM_PROMPT}\n\nCurrent Cloud Fleet Context:\n{context}"
+
+    # Build conversation history
+    contents = []
+    if history:
+        for msg in history:
+            role = "user" if msg.get("role") == "user" else "model"
+            text = msg.get("text", "")
+            if text:
+                contents.append({
+                    "role": role,
+                    "parts": [{"text": text}]
+                })
+
+    # Add current user message
+    contents.append({
+        "role": "user",
+        "parts": [{"text": message}]
+    })
+
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.0-flash-lite",
+            contents=contents,
+            config={
+                "system_instruction": system_instruction
+            }
+        )
+        return response.text.strip()
+    except Exception as exc:
+        return f"ARIA encountered an error: {exc}"
+
+
 async def generate_ai_analysis(resources, efficiency_score: int, total_savings: float) -> dict:
     """
     Generate executive summary + recommendations using Gemini.

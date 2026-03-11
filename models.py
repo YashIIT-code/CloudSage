@@ -76,3 +76,13 @@ class AnalysisResponse(BaseModel):
 
 class AnalyzeRequest(BaseModel):
     resources: List[CloudResource]
+
+
+class ChatRequest(BaseModel):
+    message: str
+    context: str = ""
+    history: List[dict] = []
+
+
+class ChatResponse(BaseModel):
+    reply: str

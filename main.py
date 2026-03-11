@@ -51,6 +51,13 @@ async def global_exception_handler(request, exc):
 app.include_router(analyze.router, prefix="/api")
 app.include_router(parse_file.router, prefix="/api")
 
+@app.middleware("http")
+async def log_requests(request, call_next):
+    logger.info(f"Incoming request: {request.method} {request.url.path}")
+    response = await call_next(request)
+    logger.info(f"Response status: {response.status_code}")
+    return response
+
 @app.get("/")
 async def root():
     return {"status": "ok", "message": "CloudSage API is running on Vercel"}
