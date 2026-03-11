@@ -7,9 +7,6 @@ from fastapi import APIRouter, HTTPException, UploadFile, File
 import sys
 import os
 
-# Ensure local backend modules can be imported if needed
-sys.path.insert(0, os.path.join(os.getcwd(), "CloudSage-main", "backend"))
-
 from models import CloudResource
 from services.file_parser import parse_file, validate_file
 

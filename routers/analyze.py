@@ -12,8 +12,8 @@ from models import (
     AnalyzeRequest, AnalysisResponse, ResourceCost,
     Inefficiency, Recommendation,
 )
-from pricing import calculate_resource_cost, get_optimized_cost
-from inefficiency import detect_inefficiencies, calculate_efficiency_score
+from services.pricing import calculate_resource_cost, get_optimized_cost
+from services.inefficiency import detect_inefficiencies, calculate_efficiency_score
 from services.gemini_service import generate_ai_analysis
 
 router = APIRouter()
