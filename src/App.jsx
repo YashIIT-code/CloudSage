@@ -340,7 +340,7 @@ export default function App() {
             })
           };
 
-          const res = await fetch("https://something.up.railway.app", {
+          const res = await fetch("https://cloudsage-production.up.railway.app/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
@@ -562,7 +562,7 @@ export default function App() {
       ? `Fleet: ${analyzed.length} VMs · $${totalCost}/mo · $${totalSavings} savings · ${idleCount} idle · ${highRisk} high-risk · ${totalCO2}kg CO₂\nResources: ${JSON.stringify(analyzed.map(r => ({ id: r.resource_id, provider: r.provider, type: r.type, region: r.region, cpu: r.cpu_avg, mem: r.mem_avg, storage: r.storage_gb, cost: r.monthly_cost, risk: r.risk, savings: r.savings, co2: r.co2, actions: r.actions.map(a => a.text) })))}`
       : "No data uploaded yet.";
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch("https://cloudsage-production.up.railway.app/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg, context: ctx, history: chat })
