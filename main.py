@@ -8,7 +8,7 @@ except ImportError:
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from routers import analyze
+from routers import analyze, parse_file
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -42,8 +42,9 @@ async def global_exception_handler(request, exc):
         }
     )
 
-# Include core analysis router
+# Include core routers
 app.include_router(analyze.router, prefix="/api")
+app.include_router(parse_file.router, prefix="/api")
 
 @app.get("/")
 async def root():

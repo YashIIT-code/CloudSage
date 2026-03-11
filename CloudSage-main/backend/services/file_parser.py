@@ -19,11 +19,11 @@ ALLOWED_EXTENSIONS = {".csv", ".json"}
 
 # Column alias mapping (lowercase) → CloudResource field
 _ALIASES: dict[str, list[str]] = {
-    "resource_id": ["id", "name", "resource", "instance", "resource_id", "resource_name", "instance_id"],
+    "resource_name": ["id", "name", "resource", "instance", "resource_id", "resource_name", "instance_id"],
     "provider": ["provider", "cloud", "vendor", "platform"],
-    "resource_type": ["type", "resource_type", "kind", "class", "category"],
+    "type": ["type", "resource_type", "kind", "class", "category"],
     "region": ["region", "location", "zone", "datacenter", "availability_zone"],
-    "instance_type": ["instance_type", "sku", "size", "family", "machine_type", "vm_size"],
+    "size": ["instance_type", "sku", "size", "family", "machine_type", "vm_size"],
     "environment": ["environment", "env", "stage", "tags", "tag", "label"],
     "cpu_utilization": ["cpu", "cpu_avg", "cpu_utilization", "cpu_usage", "compute"],
     "memory_utilization": ["mem", "memory", "mem_avg", "memory_utilization", "ram", "mem_usage"],
@@ -145,11 +145,11 @@ def _dataframe_to_resources(df: pd.DataFrame) -> list[CloudResource]:
                 return _strip_html(str(row[col]))
             return default
 
-        resource_id = _get("resource_id", f"resource-{len(resources)}")
+        resource_name = _get("resource_name", f"resource-{len(resources)}")
         provider = _parse_provider(_get("provider", "aws"))
-        resource_type = _parse_resource_type(_get("resource_type", "vm"))
+        resource_type = _parse_resource_type(_get("type", "vm"))
         region = _get("region", "us-east-1")
-        instance_type = _get("instance_type", "t3.medium")
+        size = _get("size", "t3.medium")
         environment = _parse_environment(_get("environment", "production"))
         cpu = _safe_float(_get("cpu_utilization", None), None)
         mem = _safe_float(_get("memory_utilization", None), None)
@@ -162,11 +162,11 @@ def _dataframe_to_resources(df: pd.DataFrame) -> list[CloudResource]:
         mem_val = min(max(mem, 0), 100) if mem is not None else None
 
         resources.append(CloudResource(
-            resource_id=resource_id,
+            resource_name=resource_name,
             provider=provider,
-            resource_type=resource_type,
+            type=resource_type,
             region=region,
-            instance_type=instance_type,
+            size=size,
             environment=environment,
             cpu_utilization=cpu_val,
             memory_utilization=mem_val,
