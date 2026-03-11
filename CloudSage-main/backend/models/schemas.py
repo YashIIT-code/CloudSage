@@ -31,11 +31,11 @@ class Environment(str, Enum):
 # ─── Core Models ────────────────────────────────────────────────────────────────
 
 class CloudResource(BaseModel):
-    resource_id: str = Field(..., description="Unique identifier for the resource")
+    resource_name: str = Field(..., description="Unique identifier for the resource")
+    type: ResourceType = Field(default=ResourceType.vm, description="Type of cloud resource")
     provider: Provider = Field(default=Provider.aws, description="Cloud provider")
-    resource_type: ResourceType = Field(default=ResourceType.vm, description="Type of cloud resource")
     region: str = Field(default="us-east-1", description="Deployment region")
-    instance_type: str = Field(default="t3.medium", description="Instance type / SKU")
+    size: str = Field(default="t3.medium", description="Instance type / SKU")
     environment: Environment = Field(default=Environment.production, description="Deployment environment")
     cpu_utilization: Optional[float] = Field(default=None, ge=0, le=100, description="Average CPU utilization %")
     memory_utilization: Optional[float] = Field(default=None, ge=0, le=100, description="Average memory utilization %")

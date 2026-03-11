@@ -33,6 +33,7 @@ class CloudResource(BaseModel):
     environment: Environment = Environment.PRODUCTION
     cpu_utilization: Optional[float] = None
     memory_utilization: Optional[float] = None
+    monthly_cost: float = 0.0
 
 
 class ResourceCost(BaseModel):

@@ -53,8 +53,8 @@ async def analyze(request: AnalyzeRequest):
     breakdown = [
         ResourceCost(
             resource_name  = r.resource_name,
-            type           = str(r.type).replace("ResourceType.", ""),
-            provider       = str(r.provider).replace("Provider.", ""),
+            type           = r.type.value if hasattr(r.type, 'value') else str(r.type),
+            provider       = r.provider.value if hasattr(r.provider, 'value') else str(r.provider),
             monthly_cost   = costs[i],
             optimized_cost = optimized_costs[i],
             saving         = round(costs[i] - optimized_costs[i], 2),

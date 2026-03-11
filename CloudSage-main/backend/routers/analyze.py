@@ -32,17 +32,17 @@ async def analyze(request: AnalyzeRequest):
         optimized_monthly_cost += optimized
         
         # DEBUG print for verification
-        print(f"DEBUG: Resource {res.resource_id} (Provider: {res.provider.value}, Type: {res.resource_type.value}, Size: {res.instance_type}, Hours: {res.hours_per_day}) -> Cost: {cost}")
+        print(f"DEBUG: Resource {res.resource_name} (Provider: {res.provider.value}, Type: {res.type.value}, Size: {res.size}, Hours: {res.hours_per_day}) -> Cost: {cost}")
 
         issues = detect_inefficiencies(res)
         all_inefficiencies.extend(issues)
 
         resource_summaries.append({
-            "resource_id": res.resource_id,
+            "resource_id": res.resource_name,
             "provider": res.provider.value,
-            "type": res.resource_type.value,
+            "type": res.type.value,
             "region": res.region,
-            "instance_type": res.instance_type,
+            "instance_type": res.size,
             "environment": res.environment.value,
             "cpu": res.cpu_utilization,
             "memory": res.memory_utilization,

@@ -10,6 +10,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from routers import analyze
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("cloudsage-root")
+
 app = FastAPI(
     title="CloudSage Backend",
     description="Professional Python Backend for Cloud Architecture Analysis",
@@ -29,6 +33,7 @@ app.add_middleware(
 # Global API Exception Handler to enforce structured JSON boundaries
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
     return JSONResponse(
         status_code=500,
         content={
@@ -41,8 +46,12 @@ async def global_exception_handler(request, exc):
 app.include_router(analyze.router, prefix="/api")
 
 @app.get("/")
-def read_root():
-    return {"status": "success", "message": "CloudSage API is alive and running."}
+async def root():
+    return {"status": "ok", "message": "CloudSage API is running on Vercel"}
+
+@app.get("/api/health")
+async def health():
+    return {"status": "healthy", "version": "1.1.0"}
 
 # Enable local testing and fast feedback loop (python -m backend.main)
 if __name__ == "__main__":
