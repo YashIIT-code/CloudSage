@@ -4,10 +4,6 @@ load_dotenv()
 
 import asyncio
 from routers import analyze
-import google.generativeai as genai
-
-# genai must be explicitly configured if it wasn't during module import (or simply wait, since we loaded dotenv FIRST, let's see if the module import caught it!)
-# Wait, because in routers/analyze.py we import genai inside the function, we should also manually configure it there to be robust!
 
 async def test():
     print("Loaded API Key Length:", len(os.environ.get("GEMINI_API_KEY", "")))

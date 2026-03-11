@@ -7,15 +7,19 @@ import json
 import os
 import re
 
-import google.generativeai as genai
+from google import genai
 
 # ─── Configuration ───────────────────────────────────────────────────────────────
 
-_API_KEY = os.environ.get("GEMINI_API_KEY", "")
-if _API_KEY:
-    genai.configure(api_key=_API_KEY)
+def _get_client():
+    """Returns a Gemini client if configured."""
+    api_key = os.environ.get("GEMINI_API_KEY", "")
+    if not api_key or api_key == "your_gemini_api_key_here":
+        return None
+    return genai.Client(api_key=api_key)
 
-_MODEL_NAME = "gemini-2.5-flash"
+
+_MODEL_NAME = "gemini-2.0-flash-lite"
 
 ARIA_SYSTEM_PROMPT = (
     "You are ARIA — AI Resource Intelligence Advisor. "
@@ -31,11 +35,6 @@ def _strip_html(text: str) -> str:
     return re.sub(r"<[^>]+>", "", text)
 
 
-def _is_configured() -> bool:
-    """Return True when a real API key is available."""
-    return bool(_API_KEY) and _API_KEY != "your_gemini_api_key_here"
-
-
 # ─── Analysis ────────────────────────────────────────────────────────────────────
 
 async def get_analysis(data: dict) -> dict:
@@ -43,7 +42,8 @@ async def get_analysis(data: dict) -> dict:
     Send fleet data to Gemini and request a structured analysis.
     Returns a dict with ``executive_summary`` and ``recommendations``.
     """
-    if not _is_configured():
+    client = _get_client()
+    if not client:
         return _mock_analysis(data)
 
     prompt = (
@@ -66,8 +66,10 @@ async def get_analysis(data: dict) -> dict:
     )
 
     try:
-        model = genai.GenerativeModel(_MODEL_NAME)
-        response = await model.generate_content_async(prompt)
+        response = client.models.generate_content(
+            model=_MODEL_NAME,
+            contents=prompt
+        )
         text = response.text.strip()
 
         # Strip markdown code fences if present
@@ -90,31 +92,39 @@ async def chat_with_aria(message: str, context: str = "", history: list[dict] | 
     message = _strip_html(message)
     context = _strip_html(context)
 
-    if not _is_configured():
+    client = _get_client()
+    if not client:
         return (
             f"(Mock mode) I am ARIA. I received your message: \"{message}\". "
             "Please set a valid GEMINI_API_KEY in your .env for real AI responses."
         )
 
-    full_prompt = (
-        f"{ARIA_SYSTEM_PROMPT}\n\n"
-        f"Current Cloud Fleet Context:\n{context}\n\n"
-        f"User Question: {message}"
-    )
+    system_instruction = f"{ARIA_SYSTEM_PROMPT}\n\nCurrent Cloud Fleet Context:\n{context}"
+
+    # Build conversation history
+    contents = []
+    if history:
+        for msg in history:
+            contents.append({
+                "role": msg.get("role", "user"),
+                "parts": [{"text": msg.get("parts", [{}])[0].get("text", "")}]
+            })
+
+    # Add current user message
+    contents.append({
+        "role": "user",
+        "parts": [{"text": message}]
+    })
 
     try:
-        model = genai.GenerativeModel(_MODEL_NAME)
-
-        # Build chat history if provided
-        if history:
-            if history and history[0].get("role") == "model":
-                history = history[1:]
-            chat = model.start_chat(history=history)
-            response = await chat.send_message_async(full_prompt)
-        else:
-            response = await model.generate_content_async(full_prompt)
-
-        return response.text
+        response = client.models.generate_content(
+            model=_MODEL_NAME,
+            contents=contents,
+            config={
+                "system_instruction": system_instruction
+            }
+        )
+        return response.text.strip()
     except Exception as exc:
         return f"ARIA encountered an error: {exc}"
 
