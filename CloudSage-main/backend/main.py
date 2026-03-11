@@ -13,6 +13,12 @@ from fastapi.responses import JSONResponse
 # Load .env before anything else
 load_dotenv()
 
+import sys
+# Ensure the current directory is in the path for Railway imports
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.append(current_dir)
+
 from routers import analyze, parse_file, chat, optimize # noqa: E402
 
 # ─── Logging ─────────────────────────────────────────────────────────────────────
@@ -65,3 +71,9 @@ async def global_exception_handler(request: Request, exc: Exception):
         status_code=500,
         content={"error": "Internal Server Error"},
     )
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    logger.info(f"Starting server on port {port}")
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True if os.environ.get("ENV") == "dev" else False)
