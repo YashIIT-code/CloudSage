@@ -13,7 +13,7 @@ from fastapi.responses import JSONResponse
 # Load .env before anything else
 load_dotenv()
 
-from backend.routers import analyze, parse_file, chat, optimize  # noqa: E402
+from routers import analyze, parse_file, chat, optimize # noqa: E402
 
 # ─── Logging ─────────────────────────────────────────────────────────────────────
 
