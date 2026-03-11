@@ -14,10 +14,14 @@ from fastapi.responses import JSONResponse
 load_dotenv()
 
 import sys
-# Ensure the current directory is in the path for Railway imports
+# Ensure the current and parent directories are in the path for Railway imports
 current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
 
 from routers import analyze, parse_file, chat, optimize # noqa: E402
 
