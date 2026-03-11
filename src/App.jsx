@@ -329,12 +329,13 @@ export default function App() {
                 size: String(r.type || r.size || "").trim() || null,
                 storage_gb: parseFloat(r.storage_gb) || 0,
                 region: r.region || "us-east-1",
-                hours_per_day: r.hours_idle != null ? Math.max(0.1, 24 - (r.hours_idle / 30)) : 24,
+                hours_per_day: r.hours_idle != null ? Math.max(0.1, 24 - (r.percent_idle ? (r.percent_idle / 100 * 24) : (r.hours_idle / 30))) : 24,
                 environment: r.tags && String(r.tags).toLowerCase().includes("prod") ? "production"
                   : r.tags && String(r.tags).toLowerCase().includes("stag") ? "staging"
                     : "development",
                 cpu_utilization: parseFloat(r.cpu_avg) || null,
                 memory_utilization: parseFloat(r.mem_avg) || null,
+                monthly_cost: parseFloat(r.monthly_cost) || 0,
               };
             })
           };

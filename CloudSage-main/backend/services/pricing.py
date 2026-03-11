@@ -38,17 +38,24 @@ PRICING = {
     },
     "aws": {
         "vm": {
+            "t3.nano": 3.80,
             "t3.micro": 7.59,
             "t3.small": 15.18,
             "t3.medium": 30.37,
             "t3.large": 60.74,
+            "t3.xlarge": 121.48,
+            "t3.2xlarge": 242.96,
             "m5.large": 70.08,
             "m5.xlarge": 140.16,
             "m5.2xlarge": 280.32,
+            "m5.4xlarge": 560.64,
             "c5.large": 61.20,
             "c5.xlarge": 122.40,
+            "c5.2xlarge": 244.80,
             "r5.large": 90.96,
             "r5.xlarge": 181.92,
+            "r5.2xlarge": 363.84,
+            "p3.2xlarge": 2235.00,
         },
         "storage": {
             "standard": 0.023,
@@ -71,11 +78,14 @@ PRICING = {
             "e2-small": 12.26,
             "e2-medium": 24.53,
             "e2-standard-2": 48.91,
+            "n1-standard-1": 34.67,
             "n1-standard-2": 69.35,
             "n1-standard-4": 138.70,
             "n1-standard-8": 277.40,
+            "n1-highmem-4": 182.50,
             "c2-standard-4": 138.18,
             "n2-standard-2": 77.93,
+            "n2-standard-4": 155.86,
         },
         "storage": {
             "standard": 0.020,
@@ -107,8 +117,10 @@ def normalize(text) -> str:
     return str(val).strip().lower()
 
 def calculate_resource_cost(resource: CloudResource) -> float:
-    if resource.monthly_cost > 0:
-        return resource.monthly_cost
+    # If cost is already provided and valid, prioritize it!
+    rc_cost = getattr(resource, 'monthly_cost', 0.0)
+    if rc_cost and rc_cost > 0:
+        return round(float(rc_cost), 2)
 
     provider = normalize(resource.provider)
     rtype = normalize(resource.resource_type)

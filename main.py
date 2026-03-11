@@ -1,9 +1,14 @@
 import os
+import sys
+import logging
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
     pass
+
+# Force root directory into sys.path to prioritize root models/pricing
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
