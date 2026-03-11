@@ -340,7 +340,7 @@ export default function App() {
             })
           };
 
-          const res = await fetch("/api/analyze", {
+          const res = await fetch("https://something.up.railway.app", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
