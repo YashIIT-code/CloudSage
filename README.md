@@ -127,6 +127,8 @@ Because it includes a `vercel.json` file, Vercel understands how to automaticall
 ## 🤝 Contributing
 Contributions are always welcome! If you'd like to improve the UI logic, add additional charts, refine prompt injection engineering on the backend API, or simply resolve a bug, feel free to open a Pull Request.
 
+Contributor: Mohit Gupta
+
 ---
 
 *Powered by Google Gemini* ✨
