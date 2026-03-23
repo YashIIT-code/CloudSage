@@ -1,0 +1,5 @@
+ProductName,UsageQuantity,UnblendedRate,Tags
+AmazonEC2,50,0.22,web
+AmazonS3,100,0.01,storage
+UnknownService,10,1.50,
+,25,0.1,

@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pandas
+numpy
+pytest
+python-multipart
+openai
+google-generativeai
+httpx

@@ -1,0 +1,8 @@
+service,usage,unit_cost
+api_calls,1000,0.002
+storage,50,0.10
+compute,10.5,1.25
+invalid_row_strings,abc,xyz
+missing_cost_price,100,
+negative_cost_testing,-500,0.05
+,300,0.1
